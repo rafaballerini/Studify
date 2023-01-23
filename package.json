@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "discord.js": "^14.7.1",
+    "dotenv": "^16.0.3"
+  },
+  "name": "bot-discord",
+  "version": "1.0.0",
+  "description": "bot de estudos de programacao para discord",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "bot-discord"
+  ],
+  "author": "Rafaella Ballerini",
+  "license": "ISC"
+}
