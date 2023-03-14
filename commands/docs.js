@@ -1,32 +1,49 @@
-const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, Component } = require("discord.js")
+const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, MessageButton, MessageActionRow } = require("discord.js");
 
-const row = new ActionRowBuilder()
+const row = new MessageActionRow()
     .addComponents(
-        new StringSelectMenuBuilder()
+        new MessageSelectMenu()
             .setCustomId("select")
             .setPlaceholder("Nenhuma linguagem selecionada")
-            .addOptions({
-                label: "javascript",
-                description: "Veja a documentação de Javascript",
-                value: "javascript"
+            .addOptions(
+                {
+                    label: "JavaScript",
+                    description: "Veja a documentação de JavaScript",
+                    value: "javascript",
+                    emoji: {
+                        name: "🟨",
+                        id: null
+                    }
                 },
                 {
-                    label: "python",
+                    label: "Python",
                     description: "Veja a documentação de Python",
-                    value: "python"
+                    value: "python",
+                    emoji: {
+                        name: "🐍",
+                        id: null
+                    }
                 },
                 {
                     label: "C#",
                     description: "Veja a documentação de C#",
-                    value: "csharp"
+                    value: "csharp",
+                    emoji: {
+                        name: "🔷",
+                        id: null
+                    }
                 },
                 {
-                    label: "discord.js",
+                    label: "Discord.js",
                     description: "Veja a documentação de Discord.js",
-                    value: "discordjs"
+                    value: "discordjs",
+                    emoji: {
+                        name: "🤖",
+                        id: null
+                    }
                 }
             )
-    )
+    );
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -34,6 +51,6 @@ module.exports = {
         .setDescription("Acesse a documentação da tecnologia que quiser"),
 
     async execute(interaction) {
-        await interaction.reply({content: "Selecione uma das techs abaixo:", components: [row]})
+        await interaction.reply({content: "Selecione uma das techs abaixo:", components: [row]});
     }
-}
+};
