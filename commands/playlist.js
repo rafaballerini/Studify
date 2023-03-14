@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, MessageEmbed } = require("discord.js")
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js")
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -7,7 +7,7 @@ module.exports = {
 
   async execute(interaction) {
     // Cria uma mensagem embed para fornecer informações sobre a playlist
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setColor("#1DB954")
       .setTitle("Melhor playlist de estudos do Spotify")
       .setDescription("Esta é uma playlist cuidadosamente selecionada de músicas para ajudá-lo a estudar e se concentrar.")

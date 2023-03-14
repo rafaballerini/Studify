@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, MessageEmbed } = require("discord.js")
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js")
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -8,7 +8,7 @@ module.exports = {
     async execute(interaction) {
         const sent = await interaction.reply({ content: 'Pinging...', fetchReply: true })
         const timeDiff = (sent.editedAt || sent.createdAt) - (interaction.editedAt || interaction.createdAt)
-        const pingEmbed = new MessageEmbed()
+        const pingEmbed = new EmbedBuilder()
             .setColor('BLUE')
             .setTitle('🏓 Pong!')
             .addFields(

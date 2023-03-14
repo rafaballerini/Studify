@@ -1,6 +1,6 @@
-const { SlashCommandBuilder, MessageEmbed } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
-const exampleEmbed = new MessageEmbed()
+const exampleEmbed = new EmbedBuilder()
     .setColor("ORANGE")
     .setTitle(":computer: Comandos do Git")
     .addFields(
