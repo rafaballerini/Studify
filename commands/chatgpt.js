@@ -1,54 +1,72 @@
-const { SlashCommandBuilder, SlashCommandStringOption } = require('discord.js');
-const { Configuration, OpenAIApi } = require("openai");
+const { SlashCommandBuilder } = require('discord.js');
+const { Configuration, OpenAIApi } = require('openai');
+const dotenv = require('dotenv');
 
-const dotenv = require('dotenv')
-dotenv.config()
-const { OPENAI_KEY } = process.env
+dotenv.config();
+const { OPENAI_KEY } = process.env;
 
 const configuration = new Configuration({
-    apiKey: OPENAI_KEY,
+  apiKey: OPENAI_KEY,
+  apiVersion: '2021-06-29',
 });
 
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('chatgpt')
-        .setDescription('Discord/GPT API is a chatbot platform that allows users to have chatbot experiences in Discord')
-        .addStringOption(option =>
-            option.setName('text')
-                .setDescription('what are you thinking?')
-                .setRequired(true)),
-    async execute(interaction) {
+const openai = new OpenAIApi(configuration);
+const MODEL_NAME = 'text-davinci-003';
 
-        const input = interaction.options.getString("text")
-        await interaction.reply('Working on it');
-        try {
-            const result = await getOpenAI(input);
-            await interaction.editReply(result);
-        }
-        catch (err) {
-            await interaction.editReply(err.message);
-        }
+// Cache object to store responses for input strings
+const cache = {};
 
-    }
-};
+const getOpenAIResponse = async (input) => {
+  if (cache[input]) {
+    // Return the cached response if it exists
+    return cache[input];
+  }
 
-const getOpenAI = async (input) => {
-    let response = 'api not available';
-    const openai = new OpenAIApi(configuration);
-    const completion = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: input,
-        temperature: 0,
-        max_tokens: 500,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
+  try {
+    const response = await openai.createCompletion({
+      model: MODEL_NAME,
+      prompt: input,
+      maxTokens: 2048,
+      n: 1,
+      stop: '\n',
+      append: '\n',
+      timeout: 15000, // 15 seconds
     });
 
-    if (completion?.data?.choices[0].text) {
-        console.log(completion.data.choices);
-        response = completion?.data?.choices[0].text;
+    // Check for errors
+    if (response.choices && response.choices[0].text) {
+      const result = response.choices[0].text.trim();
+      cache[input] = result;
+      return result;
+    } else if (response.error) {
+      throw new Error(response.error.message);
+    } else {
+      throw new Error('API not available');
     }
+  } catch (error) {
+    throw new Error(`Failed to get OpenAI response: ${error.message}`);
+  }
+};
 
-    return 'Question: ' + input + response;
-}
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('chatgpt')
+    .setDescription('Talk to an AI chatbot powered by OpenAI')
+    .addStringOption((option) =>
+      option
+        .setName('message')
+        .setDescription('What do you want to say?')
+        .setRequired(true)
+    ),
+  async execute(interaction) {
+    const input = interaction.options.getString('message');
+
+    await interaction.deferReply();
+    try {
+      const response = await getOpenAIResponse(input);
+      await interaction.editReply(response);
+    } catch (error) {
+      await interaction.editReply(`An error occurred: ${error.message}`);
+    }
+  },
+};
